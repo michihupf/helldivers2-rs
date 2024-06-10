@@ -1,71 +1,82 @@
 # Implemented Schema Model Structs
+## Common
+- [x] Position
+- [x] WarId
 
-[x] WarId
-[x] WarStatus
-[x] PlanetStatus
-[x] PlanetAttack
-[x] Campaign
-[ ] JointOperation
-[x] PlanetEvent
-[x] WarInfo
-[x] PlanetInfo
-[x] PlanetCoordinates
-[x] HomeWorld
-[x] WarSummary
-[x] GalaxyStats
-[x] PlanetStats
-[x] NewsFeedItem
-[x] Assignment
-[x] Setting
-[x] Task
-[x] Reward
-[x] War
-[x] LocalizedMessage
-[x] Statistics
-[x] Assignment2 / MajorOrder
-[x] Task2 / MajorOrderTask (alias of Task)
-[x] Reward2 / MajorOrderReward
-[ ] Campaign2 (more information needed)
-[x] Planet
-[x] Biome
-[x] Hazard
-[x] Position (alias of PlanetCoordinates)
-[x] Event (alias of PlanetEvent)
-[x] Dispatch
-[x] SteamNews
+## raw
+### War
+- [x] WarInfo
+- [x] WarStatus
+- [x] WarSummary
 
-# Reviewed Prototypes
+### Assignments
+- [x] Assignment
+- [x] Campaign
+- [x] JointOperation
+- [x] Reward
+- [x] Setting
+- [x] Task
 
-[ ] WarId
-[ ] WarStatus
-[ ] PlanetStatus
-[ ] PlanetAttack
-[ ] Campaign
-[ ] JointOperation
-[ ] PlanetEvent
-[ ] WarInfo
-[ ] PlanetInfo
-[ ] PlanetCoordinates
-[ ] HomeWorld
-[ ] WarSummary
-[ ] GalaxyStats
-[ ] PlanetStats
-[ ] NewsFeedItem
-[ ] Assignment
-[ ] Setting
-[ ] Task
-[ ] Reward
-[ ] War
-[ ] LocalizedMessage
-[ ] Statistics
-[ ] Assignment2 / MajorOrder
-[ ] Task2 / MajorOrderTask (alias of Task)
-[ ] Reward2 / MajorOrderReward
-[ ] Campaign2 (more information needed)
-[ ] Planet
-[ ] Biome
-[ ] Hazard
-[ ] Position (alias of PlanetCoordinates)
-[ ] Event
-[ ] Dispatch
-[ ] SteamNews
+### Planet
+- [x] HomeWorld
+- [x] PlanetAttack
+- [x] PlanetEvent
+- [x] PlanetInfo
+- [x] PlanetStatus
+- [x] PlanetCoordinates
+
+### Stats
+- [x] GalaxyStats
+- [x] PlanetStats
+
+### Dispatch
+- [x] NewsFeedItem
+
+## v1
+### War
+- [x] War
+
+### Assignments
+- [x] Assignment2 / MajorOrder
+- [ ] Campaign2 (more information needed)
+- [x] Reward2 / MajorOrderReward
+- [x] Task2 / Major Order Task
+
+### Planet
+- [x] Biome
+- [x] Event
+- [x] Hazard
+- [x] Planet
+- [x] Position
+
+### Dispatch
+- [x] Dispatch
+- [x] LocalizedMessage
+- [x] SteamNews
+
+### Stats
+- [x] Statistics
+
+# Implemented routes
+## raw
+- [x] `/raw/api/WarSeason/current/WarID`
+- [x] `/raw/api/WarSeason/{war_id}/Status`
+- [x] `/raw/api/WarSeason/{war_id}/WarInfo`
+- [x] `/raw/api/Stats/war/{war_id}/801/summary`
+- [x] `/raw/api/NewsFeed/{war_id}`
+- [x] `/raw/api/v2/Assignment/War/{war_id}`
+
+## v1
+- [x] `/api/v1/war`
+- [ ] `/api/v1/assignments`
+- [ ] `/api/v1/assignments/{index}`
+- [ ] `/api/v1/campaigns`
+- [ ] `/api/v1/campaigns/{index}`
+- [ ] `/api/v1/dispatches`
+- [ ] `/api/v1/dispatches/{index}`
+- [ ] `/api/v1/planets`
+- [ ] `/api/v1/planets/{index}`
+- [ ] `/api/v1/planet-events`
+- [ ] `/api/v1/steam`
+- [ ] `/api/v1/steam/{gid}`
+

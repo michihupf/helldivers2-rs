@@ -1,6 +1,3 @@
-pub mod assignment;
-pub mod campaign;
-pub mod dispatch;
-pub mod planet;
-pub mod stats;
-pub mod war;
+pub mod common;
+pub mod raw;
+pub mod v1;
