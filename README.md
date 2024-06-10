@@ -1,5 +1,5 @@
 # Helldivers 2 API wrapper in Rust
-This is a wrapper around the [Helldivers 2 API]("https://github.com/helldivers-2/api")
+This is a wrapper around the [Helldivers 2 API](https://github.com/helldivers-2/api)
 provided by the [Helldivers 2 Community](https://github.com/helldivers-2) community implemented 
 in the Rust programming language.
 
