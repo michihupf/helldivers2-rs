@@ -41,7 +41,7 @@
 - [x] Task2 / Major Order Task
 
 ### Campaign
-- [ ] Campaign2 (more information needed)
+- [x] Campaign2 (more information needed)
 
 ### Dispatch
 - [x] Dispatch
@@ -73,15 +73,15 @@
 
 ## v1
 - [x] `/api/v1/war`
-- [ ] `/api/v1/assignments`
-- [ ] `/api/v1/assignments/{index}`
-- [ ] `/api/v1/campaigns`
-- [ ] `/api/v1/campaigns/{index}`
-- [ ] `/api/v1/dispatches`
-- [ ] `/api/v1/dispatches/{index}`
-- [ ] `/api/v1/planets`
-- [ ] `/api/v1/planets/{index}`
-- [ ] `/api/v1/planet-events`
-- [ ] `/api/v1/steam`
-- [ ] `/api/v1/steam/{gid}`
+- [x] `/api/v1/assignments`
+- [x] `/api/v1/assignments/{index}`
+- [x] `/api/v1/campaigns`
+- [x] `/api/v1/campaigns/{index}`
+- [x] `/api/v1/dispatches`
+- [x] `/api/v1/dispatches/{index}`
+- [x] `/api/v1/planets`
+- [x] `/api/v1/planets/{index}`
+- [x] `/api/v1/planet-events`
+- [x] `/api/v1/steam`
+- [x] `/api/v1/steam/{gid}`
 
