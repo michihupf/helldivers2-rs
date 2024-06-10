@@ -155,24 +155,24 @@ mod testing {
     #[tokio::test]
     async fn war_id_endpoint() {
         let result = HELL_API_TEST.war_id().await;
-        assert!(result.is_ok(), "{result:?}");
+        result.unwrap();
     }
 
     #[tokio::test]
     async fn war_status_endpoint() {
         let result = HELL_API_TEST.war_status(&WarId::from(801)).await;
-        assert!(result.is_ok(), "{result:?}");
+        result.unwrap();
     }
 
     #[tokio::test]
     async fn war_info_endpoint() {
         let result = HELL_API_TEST.war_info(&WarId::from(801)).await;
-        assert!(result.is_ok(), "{result:?}");
+        result.unwrap();
     }
 
     #[tokio::test]
     async fn war_summary_endpoint() {
         let result = HELL_API_TEST.war_summary(&WarId::from(801)).await;
-        assert!(result.is_ok(), "{result:?}");
+        result.unwrap();
     }
 }

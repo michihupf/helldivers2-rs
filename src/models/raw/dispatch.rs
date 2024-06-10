@@ -44,6 +44,6 @@ mod testing {
     #[tokio::test]
     async fn news_feed_endpoint() {
         let result = HELL_API_TEST.news_feed(WarId::from(801)).await;
-        assert!(result.is_ok(), "{result:?}");
+        result.unwrap();
     }
 }

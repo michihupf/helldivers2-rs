@@ -93,6 +93,6 @@ mod testing {
     #[tokio::test]
     async fn assignments_raw_endpoint() {
         let result = HELL_API_TEST.assignments_raw(WarId::from(801)).await;
-        assert!(result.is_ok(), "{result:?}");
+        result.unwrap();
     }
 }
