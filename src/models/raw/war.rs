@@ -8,7 +8,7 @@ use crate::{
 };
 
 use super::{
-    assignment::{Campaign, JointOperation},
+    campaign::Campaign,
     planet::{HomeWorld, PlanetAttack, PlanetEvent, PlanetInfo, PlanetStatus},
     stats::{GalaxyStats, PlanetStats},
 };
@@ -103,6 +103,16 @@ pub struct WarSummary {
 }
 
 impl Parseable<WarSummary> for WarSummary {}
+
+/// Represents a joint operation.
+#[derive(Debug, Deserialize)]
+pub struct JointOperation {
+    pub id: i32,
+    #[serde(rename = "planetIndex")]
+    pub planet_index: i32,
+    #[serde(rename = "hqNodeIndex")]
+    pub hq_node_index: i32,
+}
 
 impl HellApi {
     /// Requests the current war id.

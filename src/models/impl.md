@@ -4,18 +4,17 @@
 - [x] WarId
 
 ## raw
-### War
-- [x] WarInfo
-- [x] WarStatus
-- [x] WarSummary
-
 ### Assignments
 - [x] Assignment
-- [x] Campaign
-- [x] JointOperation
 - [x] Reward
 - [x] Setting
 - [x] Task
+
+### Campaign
+- [x] Campaign
+
+### Dispatch
+- [x] NewsFeedItem
 
 ### Planet
 - [x] HomeWorld
@@ -29,18 +28,25 @@
 - [x] GalaxyStats
 - [x] PlanetStats
 
-### Dispatch
-- [x] NewsFeedItem
+### War
+- [x] WarInfo
+- [x] WarStatus
+- [x] WarSummary
+- [x] JointOperation
 
 ## v1
-### War
-- [x] War
-
 ### Assignments
 - [x] Assignment2 / MajorOrder
-- [ ] Campaign2 (more information needed)
 - [x] Reward2 / MajorOrderReward
 - [x] Task2 / Major Order Task
+
+### Campaign
+- [ ] Campaign2 (more information needed)
+
+### Dispatch
+- [x] Dispatch
+- [x] LocalizedMessage
+- [x] SteamNews
 
 ### Planet
 - [x] Biome
@@ -49,13 +55,12 @@
 - [x] Planet
 - [x] Position
 
-### Dispatch
-- [x] Dispatch
-- [x] LocalizedMessage
-- [x] SteamNews
-
 ### Stats
 - [x] Statistics
+
+### War
+- [x] War
+
 
 # Implemented routes
 ## raw
