@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
+    middleware,
     models::common,
     prelude::{Parseable, Result},
     HellApi,
@@ -87,7 +88,7 @@ impl HellApi {
     ///
     /// Endpoint: `/api/v1/planets`.
     pub async fn planets() -> Result<Vec<Planet>> {
-        Self::request_blocking("/api/v1/planets").await
+        middleware::request_blocking("/api/v1/planets").await
     }
 
     /// Retrieves a specific planet with identifier `id`.
@@ -95,13 +96,13 @@ impl HellApi {
     /// Endpoint: `/api/v1/planets/{id}`.
     pub async fn planet(id: i32) -> Result<Planet> {
         let endpoint = format!("/api/v1/planets/{id}");
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 
     /// Retrieves a list of all planets with an active event.
     ///
     /// Endpoint: `/api/v1/planet-events`.
     pub async fn planet_events() -> Result<Vec<Planet>> {
-        Self::request_blocking("/api/v1/planet-events").await
+        middleware::request_blocking("/api/v1/planet-events").await
     }
 }

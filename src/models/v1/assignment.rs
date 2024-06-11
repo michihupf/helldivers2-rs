@@ -2,7 +2,8 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 use crate::{
-    models::common::{self},
+    middleware,
+    models::common,
     prelude::{Parseable, Result},
     HellApi,
 };
@@ -54,7 +55,7 @@ impl HellApi {
     ///
     /// Endpoint: `/api/v1/assignments`.
     pub async fn assignments() -> Result<Vec<Assignment>> {
-        Self::request_blocking::<Vec<Assignment>>("/api/v1/assignments").await
+        middleware::request_blocking::<Vec<Assignment>>("/api/v1/assignments").await
     }
 
     /// Requests a specific major order.
@@ -62,6 +63,6 @@ impl HellApi {
     /// Endpoint: `/api/v1/assignments/{index}`
     pub async fn assignment(index: i64) -> Result<Assignment> {
         let endpoint = format!("/api/v1/assignments/{index}");
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 }

@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use crate::{
+    middleware,
     prelude::{Parseable, Result},
     HellApi,
 };
@@ -30,7 +31,7 @@ impl HellApi {
     ///
     /// Endpoint: `/api/v1/campaigns`.
     pub async fn campaigns() -> Result<Vec<Campaign>> {
-        Self::request_blocking("/api/v1/campaigns").await
+        middleware::request_blocking("/api/v1/campaigns").await
     }
 
     /// Retrieves a specific campaign with identifier `id`.
@@ -38,6 +39,6 @@ impl HellApi {
     /// Endpoint: `/api/v1/campaigns/{id}`.
     pub async fn campaign(id: i32) -> Result<Campaign> {
         let endpoint = format!("/api/v1/campaigns/{id}");
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 }

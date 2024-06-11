@@ -3,6 +3,7 @@ use serde::Deserialize;
 use serde_with::TimestampSeconds;
 
 use crate::{
+    middleware,
     prelude::{Parseable, Result},
     HellApi,
 };
@@ -124,7 +125,7 @@ impl HellApi {
     ///
     /// Endpoint: `/raw/api/WarSeason/current/WarID`.
     pub async fn war_id() -> Result<WarId> {
-        Self::request_blocking("/raw/api/WarSeason/current/WarID").await
+        middleware::request_blocking("/raw/api/WarSeason/current/WarID").await
     }
 
     /// Requests the current war status.
@@ -132,7 +133,7 @@ impl HellApi {
     /// Endpoint: `/raw/api/WarSeason/{war_id}/Status`.
     pub async fn war_status(war_id: &WarId) -> Result<WarStatus> {
         let endpoint = format!("/raw/api/WarSeason/{}/Status", war_id.id);
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 
     /// Requests the current war info.
@@ -140,7 +141,7 @@ impl HellApi {
     /// Endpoint: `/raw/api/WarSeason/{war_id}/WarInfo`.
     pub async fn war_info(war_id: &WarId) -> Result<WarInfo> {
         let endpoint = format!("/raw/api/WarSeason/{}/WarInfo", war_id.id);
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 
     /// Requests the current war summary.
@@ -148,6 +149,6 @@ impl HellApi {
     /// Endpoint: `/raw/api/Stats/war/{war_id}/summary`.
     pub async fn war_summary(war_id: &WarId) -> Result<WarSummary> {
         let endpoint = format!("/raw/api/Stats/war/{}/summary", war_id.id);
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 }

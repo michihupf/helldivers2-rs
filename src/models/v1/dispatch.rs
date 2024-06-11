@@ -2,6 +2,7 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::Deserialize;
 
 use crate::{
+    middleware,
     prelude::{Parseable, Result},
     HellApi,
 };
@@ -99,7 +100,7 @@ impl HellApi {
     ///
     /// Endpoint: `/api/v1/dispatches`.
     pub async fn dispatches() -> Result<Vec<Dispatch>> {
-        Self::request_blocking("/api/v1/dispatches").await
+        middleware::request_blocking("/api/v1/dispatches").await
     }
 
     /// Retrieves a specific dispatch with identifier `id`.
@@ -107,14 +108,14 @@ impl HellApi {
     /// Endpoint: `/api/v1/dispatches/{id}`.
     pub async fn dispatch(id: i32) -> Result<Dispatch> {
         let endpoint = format!("/api/v1/dispatches/{id}");
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 
     /// Retrieves the Steam newsfeeed for Helldivers 2.
     ///
     /// Endpoint: `/api/v1/steam`.
     pub async fn steam_newsfeed() -> Result<Vec<SteamNews>> {
-        Self::request_blocking("/api/v1/steam").await
+        middleware::request_blocking("/api/v1/steam").await
     }
 
     /// Retrieves a specific newsfeed item from the Helldivers 2 Steam newsfeed.
@@ -122,6 +123,6 @@ impl HellApi {
     /// Endpoint: `/api/v1/steam/{gid}`.
     pub async fn steam_newsitem(gid: &String) -> Result<SteamNews> {
         let endpoint = format!("/api/v1/steam/{gid}");
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 }

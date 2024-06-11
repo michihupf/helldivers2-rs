@@ -3,6 +3,7 @@ use serde::Deserialize;
 use serde_with::TimestampSeconds;
 
 use crate::{
+    middleware,
     prelude::{Parseable, Result},
     HellApi,
 };
@@ -34,6 +35,6 @@ impl HellApi {
     /// Endpoint: `/raw/api/NewsFeed/{war_id}`.
     pub async fn news_feed(war_id: WarId) -> Result<Vec<NewsFeedItem>> {
         let endpoint = format!("/raw/api/NewsFeed/{}", war_id.id);
-        Self::request_blocking(endpoint.as_str()).await
+        middleware::request_blocking(endpoint.as_str()).await
     }
 }

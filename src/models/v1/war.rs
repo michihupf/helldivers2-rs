@@ -2,6 +2,7 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::Deserialize;
 
 use crate::{
+    middleware,
     prelude::{Parseable, Result},
     HellApi,
 };
@@ -41,6 +42,6 @@ impl HellApi {
     ///
     /// Endpoint: `/api/v1/war`.
     pub async fn war() -> Result<War> {
-        Self::request_blocking("/api/v1/war").await
+        middleware::request_blocking("/api/v1/war").await
     }
 }
