@@ -1,3 +1,7 @@
+use std::time::Duration;
+
+use lazy_static::lazy_static;
+use ratelimit::Ratelimiter;
 use reqwest::Response;
 use serde::de::DeserializeOwned;
 
@@ -31,12 +35,9 @@ pub(crate) trait Parseable<T: DeserializeOwned> {
     }
 }
 
-#[cfg(test)]
-pub(crate) mod testing {
-    use crate::HellApi;
-    use lazy_static::lazy_static;
-
-    lazy_static! {
-        pub static ref HELL_API_TEST: HellApi = HellApi::new();
-    }
+lazy_static! {
+    pub static ref RATE_LIMITER: Ratelimiter = Ratelimiter::builder(5, Duration::from_secs(11))
+        .max_tokens(5)
+        .build()
+        .unwrap();
 }

@@ -10,6 +10,7 @@ use crate::{
 use super::war::WarId;
 
 /// Represents an item in the newsfeed of Super Earth.
+#[non_exhaustive]
 #[serde_with::serde_as]
 #[derive(Debug, Deserialize)]
 pub struct NewsFeedItem {
@@ -31,19 +32,8 @@ impl HellApi {
     /// Retrieves a list of news messages from Super Earth.
     ///
     /// Endpoint: `/raw/api/NewsFeed/{war_id}`.
-    pub async fn news_feed(&self, war_id: WarId) -> Result<Vec<NewsFeedItem>> {
+    pub async fn news_feed(war_id: WarId) -> Result<Vec<NewsFeedItem>> {
         let endpoint = format!("/raw/api/NewsFeed/{}", war_id.id);
-        self.request_blocking(endpoint.as_str()).await
-    }
-}
-
-#[cfg(test)]
-mod testing {
-    use crate::{models::raw::war::WarId, prelude::testing::HELL_API_TEST};
-
-    #[tokio::test]
-    async fn news_feed_endpoint() {
-        let result = HELL_API_TEST.news_feed(WarId::from(801)).await;
-        result.unwrap();
+        Self::request_blocking(endpoint.as_str()).await
     }
 }

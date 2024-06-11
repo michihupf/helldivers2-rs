@@ -4,7 +4,7 @@
 use serde::de::DeserializeOwned;
 
 use crate::{
-    prelude::{Error, Parseable, Result},
+    prelude::{Error, Parseable, Result, RATE_LIMITER},
     HellApi,
 };
 
@@ -12,13 +12,11 @@ use crate::{
 const BASE_URL: &str = "https://api.helldivers2.dev";
 
 impl HellApi {
-    pub(crate) async fn request<T>(&self, endpoint: &str) -> Result<T>
+    pub(crate) async fn request<T>(endpoint: &str) -> Result<T>
     where
         T: DeserializeOwned + Parseable<T>,
     {
-        self.rate_limiter
-            .try_wait()
-            .map_err(Error::RateLimitReached)?;
+        RATE_LIMITER.try_wait().map_err(Error::RateLimitReached)?;
 
         let response = reqwest::get(BASE_URL.to_owned() + endpoint).await?;
 
@@ -27,12 +25,12 @@ impl HellApi {
 
     /// Requests the API `endpoint` blocking the current thread when the `rate` limit has been reached.
     /// Afterwards the JSON response is deserialized into `T`.
-    pub(crate) async fn request_blocking<T>(&self, endpoint: &str) -> Result<T>
+    pub(crate) async fn request_blocking<T>(endpoint: &str) -> Result<T>
     where
         T: DeserializeOwned + Parseable<T>,
     {
         // block until ready
-        while let Err(wait_for) = self.rate_limiter.try_wait() {
+        while let Err(wait_for) = RATE_LIMITER.try_wait() {
             tokio::time::sleep(wait_for).await;
         }
 

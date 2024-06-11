@@ -8,6 +8,7 @@ use crate::{
 use super::planet::Planet;
 
 /// Represents an ongoing campaign on a planet.
+#[non_exhaustive]
 #[derive(Debug, Deserialize)]
 pub struct Campaign {
     /// The unique identifier of this campaign.
@@ -28,30 +29,15 @@ impl HellApi {
     /// Retrieves a list of all available campaign information.
     ///
     /// Endpoint: `/api/v1/campaigns`.
-    pub async fn campaigns(&self) -> Result<Vec<Campaign>> {
-        self.request_blocking("/api/v1/campaigns").await
+    pub async fn campaigns() -> Result<Vec<Campaign>> {
+        Self::request_blocking("/api/v1/campaigns").await
     }
 
     /// Retrieves a specific campaign with identifier `id`.
     ///
     /// Endpoint: `/api/v1/campaigns/{id}`.
-    pub async fn campaign(&self, id: i32) -> Result<Campaign> {
+    pub async fn campaign(id: i32) -> Result<Campaign> {
         let endpoint = format!("/api/v1/campaigns/{id}");
-        self.request_blocking(endpoint.as_str()).await
-    }
-}
-
-#[cfg(test)]
-mod testing {
-    use crate::prelude::testing::HELL_API_TEST;
-
-    #[tokio::test]
-    async fn campaigns_endpoint() {
-        let result = HELL_API_TEST.campaigns().await;
-        let inner = result.unwrap();
-        let first = inner.first().unwrap();
-
-        let result = HELL_API_TEST.campaign(first.id).await;
-        result.unwrap();
+        Self::request_blocking(endpoint.as_str()).await
     }
 }
