@@ -10,7 +10,7 @@ pub enum Error {
     // #[error("ERROR")]
     // General,
     /// HTTP request failed to complete successfully.
-    #[error("HTTP request failed. {0}")]
+    #[error("HTTP request failed. {0:?}")]
     RequestError(#[from] reqwest::Error),
     /// The Rate-Limit has been reached.
     #[error("Rate limit reached.")]
