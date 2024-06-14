@@ -8,7 +8,6 @@ use crate::{
 };
 
 /// A message than can either be a simple String or a LocalizedMessage.
-#[non_exhaustive]
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
 pub enum Message {
