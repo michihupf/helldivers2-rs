@@ -39,7 +39,7 @@ pub(crate) trait Parseable {
 }
 
 lazy_static! {
-    pub static ref RATE_LIMITER: Ratelimiter = Ratelimiter::builder(5, Duration::from_secs(10))
+    pub static ref RATE_LIMITER: Ratelimiter = Ratelimiter::builder(5, Duration::from_secs(11))
         .max_tokens(5)
         .build()
         .unwrap();
