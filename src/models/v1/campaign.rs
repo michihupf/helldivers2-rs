@@ -23,8 +23,8 @@ pub struct Campaign {
     pub count: u64,
 }
 
-impl Parseable<Campaign> for Campaign {}
-impl Parseable<Vec<Campaign>> for Vec<Campaign> {}
+impl Parseable for Campaign {}
+impl Parseable for Vec<Campaign> {}
 
 impl HellApi {
     /// Retrieves a list of all available campaign information.

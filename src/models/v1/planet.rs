@@ -60,8 +60,8 @@ pub struct Planet {
     pub attacking: Vec<i32>,
 }
 
-impl Parseable<Planet> for Planet {}
-impl Parseable<Vec<Planet>> for Vec<Planet> {}
+impl Parseable for Planet {}
+impl Parseable for Vec<Planet> {}
 
 /// Represents information about a biome of a Planet.
 #[non_exhaustive]

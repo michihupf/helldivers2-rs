@@ -2,6 +2,7 @@ use serde::Deserialize;
 
 /// Represents a task in an Assignment. Its exact values are not known and
 /// little of its purpose is clear.
+#[non_exhaustive]
 #[derive(Debug, Deserialize)]
 pub struct Task {
     /// Numerical value. Purpose unknown.

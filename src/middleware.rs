@@ -10,7 +10,7 @@ const BASE_URL: &str = "https://api.helldivers2.dev";
 
 pub(crate) async fn request<T>(endpoint: &str) -> Result<T>
 where
-    T: DeserializeOwned + Parseable<T>,
+    T: DeserializeOwned + Parseable,
 {
     RATE_LIMITER.try_wait().map_err(Error::RateLimitReached)?;
 
@@ -23,7 +23,7 @@ where
 /// Afterwards the JSON response is deserialized into `T`.
 pub(crate) async fn request_blocking<T>(endpoint: &str) -> Result<T>
 where
-    T: DeserializeOwned + Parseable<T>,
+    T: DeserializeOwned + Parseable,
 {
     // block until ready
     while let Err(wait_for) = RATE_LIMITER.try_wait() {

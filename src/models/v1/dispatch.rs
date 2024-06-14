@@ -68,8 +68,8 @@ pub struct Dispatch {
     pub message: Message,
 }
 
-impl Parseable<Dispatch> for Dispatch {}
-impl Parseable<Vec<Dispatch>> for Vec<Dispatch> {}
+impl Parseable for Dispatch {}
+impl Parseable for Vec<Dispatch> {}
 
 /// Represents a news article from Steam's news feed.
 #[non_exhaustive]
@@ -92,8 +92,8 @@ pub struct SteamNews {
     pub published: NaiveDateTime,
 }
 
-impl Parseable<SteamNews> for SteamNews {}
-impl Parseable<Vec<SteamNews>> for Vec<SteamNews> {}
+impl Parseable for SteamNews {}
+impl Parseable for Vec<SteamNews> {}
 
 impl HellApi {
     /// Retrieves a list of all available dispatch information.

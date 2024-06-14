@@ -9,6 +9,7 @@ The first major version will include extensive documentation and code examples.
 
 Early development will continue on branch `master` until the first major version. From there 
 further development will be done on `next` and `dev` before being remerged to `master`.
+The project is still usable as of now but the early minor versions will not neccessarily be backwards compatible.
 
 # Disclaimer
 This project does not wrap the official Helldivers 2 API. Additionally, this project is a work in

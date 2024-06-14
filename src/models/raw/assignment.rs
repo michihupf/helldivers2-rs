@@ -30,7 +30,7 @@ pub struct Assignment {
     pub setting: Setting,
 }
 
-impl Parseable<Vec<Assignment>> for Vec<Assignment> {}
+impl Parseable for Vec<Assignment> {}
 
 /// Represents the details of an Assignment like rewards and requirements.
 #[non_exhaustive]

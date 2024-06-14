@@ -27,7 +27,7 @@ pub struct NewsFeedItem {
     pub message: String,
 }
 
-impl Parseable<Vec<NewsFeedItem>> for Vec<NewsFeedItem> {}
+impl Parseable for Vec<NewsFeedItem> {}
 
 impl HellApi {
     /// Retrieves a list of news messages from Super Earth.

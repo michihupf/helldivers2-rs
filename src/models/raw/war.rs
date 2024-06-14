@@ -28,7 +28,7 @@ impl From<i32> for WarId {
     }
 }
 
-impl Parseable<WarId> for WarId {}
+impl Parseable for WarId {}
 
 /// Represents a snapshot of the current status of the
 /// galactic war.
@@ -64,7 +64,7 @@ pub struct WarStatus {
     pub planet_events: Vec<PlanetEvent>,
 }
 
-impl Parseable<WarStatus> for WarStatus {}
+impl Parseable for WarStatus {}
 
 /// Represents information about the current war.
 #[non_exhaustive]
@@ -94,7 +94,7 @@ pub struct WarInfo {
     pub home_worlds: Vec<HomeWorld>,
 }
 
-impl Parseable<WarInfo> for WarInfo {}
+impl Parseable for WarInfo {}
 
 /// Represents general statistics about the galaxy and specific planets.
 #[non_exhaustive]
@@ -107,7 +107,7 @@ pub struct WarSummary {
     pub planet_stats: Vec<PlanetStats>,
 }
 
-impl Parseable<WarSummary> for WarSummary {}
+impl Parseable for WarSummary {}
 
 /// Represents a joint operation.
 #[non_exhaustive]

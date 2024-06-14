@@ -33,8 +33,8 @@ pub struct Assignment {
     pub expiration: DateTime<Utc>,
 }
 
-impl Parseable<Assignment> for Assignment {}
-impl Parseable<Vec<Assignment>> for Vec<Assignment> {}
+impl Parseable for Assignment {}
+impl Parseable for Vec<Assignment> {}
 
 /// Represents a task of an `Assignment`.
 pub type Task = common::assignment::Task;

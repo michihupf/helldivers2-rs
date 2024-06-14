@@ -35,7 +35,7 @@ pub struct War {
     pub statistics: Statistics,
 }
 
-impl Parseable<War> for War {}
+impl Parseable for War {}
 
 impl HellApi {
     /// Requests the the current war.
