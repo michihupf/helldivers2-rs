@@ -15,8 +15,9 @@ where
     RATE_LIMITER.try_wait().map_err(Error::RateLimitReached)?;
 
     let response = reqwest::get(BASE_URL.to_owned() + endpoint).await?;
+    let json: serde_json::Value = response.json().await.map_err(Error::RequestError)?;
 
-    T::parse(response).await
+    T::parse(json)
 }
 
 /// Requests the API `endpoint` blocking the current thread when the `rate` limit has been reached.
@@ -31,6 +32,7 @@ where
     }
 
     let response = reqwest::get(BASE_URL.to_owned() + endpoint).await?;
+    let json: serde_json::Value = response.json().await.map_err(Error::RequestError)?;
 
-    T::parse(response).await
+    T::parse(json)
 }

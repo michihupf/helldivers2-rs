@@ -66,3 +66,106 @@ impl HellApi {
         middleware::request_blocking(endpoint.as_str()).await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{models::common::assignment::TaskType, prelude::Parseable};
+
+    use super::Assignment;
+
+    #[test]
+    fn parse_assignment() {
+        let json = r#"
+              {
+                "id": 3690749963,
+                "progress": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "title": "MAJOR ORDER",
+                "briefing": "Reduce the Terminid population and clear planets for citizen settlement, utilizing the new Hive Breaker Drill to cleanse their nurseries.",
+                "description": "Liberate the designated planets.",
+                "tasks": [
+                  {
+                    "type": 11,
+                    "values": [
+                          1,
+                          1,
+                          34
+                        ],
+                        "valueTypes": [
+                          3,
+                          11,
+                          12
+                        ]
+                      },
+                      {
+                        "type": 11,
+                        "values": [
+                          1,
+                          1,
+                          211
+                        ],
+                        "valueTypes": [
+                          3,
+                          11,
+                          12
+                        ]
+                      },
+                      {
+                        "type": 11,
+                        "values": [
+                          1,
+                          1,
+                          169
+                        ],
+                        "valueTypes": [
+                          3,
+                          11,
+                          12
+                        ]
+                      },
+                      {
+                        "type": 11,
+                        "values": [
+                          1,
+                          1,
+                          78
+                        ],
+                        "valueTypes": [
+                          3,
+                          11,
+                          12
+                        ]
+                      },
+                      {
+                        "type": 11,
+                        "values": [
+                          1,
+                          1,
+                          170
+                        ],
+                        "valueTypes": [
+                          3,
+                          11,
+                          12
+                        ]
+                      }
+                    ],
+                    "reward": {
+                      "type": 1,
+                      "amount": 55
+                    },
+                    "expiration": "2024-06-22T15:54:52.2224108Z"
+                  }"#;
+        let json = serde_json::from_str(json).unwrap();
+
+        let assignment = Assignment::parse(json).unwrap();
+        for task in assignment.tasks {
+            assert_eq!(task.task_type, TaskType::Liberation);
+        }
+    }
+}

@@ -2,8 +2,8 @@ use std::time::Duration;
 
 use lazy_static::lazy_static;
 use ratelimit::Ratelimiter;
-use reqwest::Response;
 use serde::de::DeserializeOwned;
+use serde_json::Value;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -27,14 +27,11 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub(crate) trait Parseable {
     /// Parses the JSON response from the API endpoint and returns `Ok(T)`
     /// if parsing succeeded - `Err(HellHubError)` otherwise.
-    fn parse(response: Response) -> impl std::future::Future<Output = Result<Self>> + Send
+    fn parse(json: Value) -> Result<Self>
     where
         Self: DeserializeOwned,
     {
-        async {
-            let json: serde_json::Value = response.json().await.map_err(Error::RequestError)?;
-            serde_json::from_value::<Self>(json).map_err(Error::ParseError)
-        }
+        serde_json::from_value::<Self>(json).map_err(Error::ParseError)
     }
 }
 

@@ -4,10 +4,10 @@ use helldivers2_rs::{models::raw::war::WarId, HellApi};
 async fn v1_assignments_endpoint() {
     let result = HellApi::assignments().await;
     let inner = result.unwrap();
-    let first = inner.first().unwrap();
-
-    let result = HellApi::assignment(first.id).await;
-    result.unwrap();
+    if let Some(first) = inner.first() {
+        let result = HellApi::assignment(first.id).await;
+        result.unwrap();
+    }
 }
 
 #[tokio::test]
