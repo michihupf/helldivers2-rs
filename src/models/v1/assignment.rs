@@ -10,26 +10,26 @@ use crate::{
 
 use super::dispatch::Message;
 
-/// Represents a "Major Order" given by Super Earth to the community.
+/// Represents an assignment ("Major Order") given by Super Earth to the community.
 #[non_exhaustive]
 #[derive(Debug, Deserialize)]
 pub struct Assignment {
-    /// The unique identifier of the major order.
+    /// The unique identifier of the assignment.
     pub id: i64,
     /// A list of numbers. How they represent progress is currently unknown.
     pub progress: Vec<i32>,
-    /// The title of the major order.
+    /// The title of the assignment.
     pub title: Message,
-    /// The briefing (long description) of the major order. Usually contains
+    /// The briefing (long description) of the assignment. Usually contains
     /// context.
     pub briefing: Message,
-    /// A short form description of the major order.
+    /// A short form description of the assignment.
     pub description: Message,
     /// A list of tasks that need to be completed for this major order.
     pub tasks: Vec<Task>,
-    /// The reward for completing the order.
+    /// The reward for completing the assignment.
     pub reward: Reward,
-    /// The date when the major order will expire.
+    /// The date when the assignment will expire.
     pub expiration: DateTime<Utc>,
 }
 
