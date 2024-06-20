@@ -1,6 +1,11 @@
+use chrono::NaiveDateTime;
 use serde::Deserialize;
+use serde_with::TimestampSeconds;
 
-use crate::models::common;
+use crate::models::common::{
+    self,
+    assignment::{CampaignId, JointOperationId},
+};
 
 /// Represents information about the homeworld(s) of a given race (faction).
 #[non_exhaustive]
@@ -39,8 +44,41 @@ pub struct PlanetAttack {
     pub target: i32,
 }
 
-/// Represents an ongoing even on a planet.
-pub type PlanetEvent = common::planet::Event;
+/// Represents an ongoing event on a planet.
+#[non_exhaustive]
+#[serde_with::serde_as]
+#[derive(Debug, Deserialize)]
+pub struct PlanetEvent {
+    /// The unique identifier of the event.
+    pub id: i32,
+    /// The index of the affected planet.
+    #[serde(rename = "planetIndex")]
+    pub planet_index: i32,
+    /// The identifier indicating the type of the event.
+    #[serde(rename = "eventType")]
+    pub event_type: i32, // TODO enum type PlanetEventType
+    /// The faction identifier that owns the planet.
+    pub race: i32, // TODO enum type Race
+    /// The current health of the event.
+    pub health: i64,
+    /// The maximum health of the event.
+    #[serde(rename = "maxHealth")]
+    pub max_health: i64,
+    /// The time at which this event starts.
+    #[serde(rename = "startTime")]
+    #[serde_as(as = "TimestampSeconds")]
+    pub start: NaiveDateTime,
+    /// The time at which this event ends.
+    #[serde(rename = "expireTime")]
+    #[serde_as(as = "TimestampSeconds")]
+    pub expire: NaiveDateTime,
+    /// The identifier of a related Campagin.
+    #[serde(rename = "campaignId")]
+    pub campaign_id: CampaignId,
+    /// A list of identifiers for related joint operations.
+    #[serde(rename = "jointOperationIds")]
+    pub joint_operations: Vec<JointOperationId>,
+}
 
 /// Represents the coordinates returned by the ArrowHead API.
 pub type PlanetCoordinates = common::planet::Position;

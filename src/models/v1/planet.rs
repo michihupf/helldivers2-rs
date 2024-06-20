@@ -1,8 +1,12 @@
+use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::Deserialize;
 
 use crate::{
     middleware,
-    models::common,
+    models::common::{
+        self,
+        assignment::{CampaignId, JointOperationId},
+    },
     prelude::{Parseable, Result},
     HellApi,
 };
@@ -13,7 +17,37 @@ use super::{dispatch::Message, stats::Statistics};
 pub type Position = common::planet::Position;
 
 /// Represents an ongoing event on a planet.
-pub type Event = common::planet::Event;
+#[non_exhaustive]
+#[serde_with::serde_as]
+#[derive(Debug, Deserialize)]
+pub struct Event {
+    /// The unique identifier of the event.
+    pub id: i32,
+    /// The identifier indicating the type of the event.
+    #[serde(rename = "eventType")]
+    pub event_type: i32, // TODO enum type PlanetEventType
+    /// The faction identifier that owns the planet.
+    pub faction: String,
+    /// The current health of the event.
+    pub health: i64,
+    /// The maximum health of the event.
+    #[serde(rename = "maxHealth")]
+    pub max_health: i64,
+    /// The time at which this event starts.
+    #[serde(rename = "startTime")]
+    #[serde_as(as = "DateTime<Utc>")]
+    pub start: NaiveDateTime,
+    /// The time at which this event ends.
+    #[serde(rename = "endTime")]
+    #[serde_as(as = "DateTime<Utc>")]
+    pub end: NaiveDateTime,
+    /// The identifier of a related Campagin.
+    #[serde(rename = "campaignId")]
+    pub campaign_id: CampaignId,
+    /// A list of identifiers for related joint operations.
+    #[serde(rename = "jointOperationIds")]
+    pub joint_operations: Vec<JointOperationId>,
+}
 
 /// Contains all aggregated information ArrowHead has about a planet.
 #[non_exhaustive]
