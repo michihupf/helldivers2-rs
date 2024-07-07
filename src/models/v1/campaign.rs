@@ -10,7 +10,7 @@ use super::planet::Planet;
 
 /// Represents an ongoing campaign on a planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct Campaign {
     /// The unique identifier of this campaign.
     pub id: i32,
@@ -40,5 +40,46 @@ impl HellApi {
     pub async fn campaign(id: i32) -> Result<Campaign> {
         let endpoint = format!("/api/v1/campaigns/{id}");
         middleware::request_blocking(endpoint.as_str()).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use const_format::formatcp;
+
+    use crate::{
+        models::v1::planet::Planet,
+        prelude::{Parseable, TestValue},
+    };
+
+    use super::Campaign;
+
+    impl TestValue for Campaign {
+        fn test_expected() -> Self {
+            Campaign {
+                id: 0,
+                planet: Planet::test_expected(),
+                _type: 1,
+                count: 2,
+            }
+        }
+
+        const TEST_JSON: &'static str = formatcp!(
+            r#"{{
+                "id": 0,
+                "planet": {},
+                "type": 1,
+                "count": 2
+            }}"#,
+            Planet::TEST_JSON
+        );
+    }
+
+    #[test]
+    fn parse_campaign() {
+        let json = serde_json::from_str(Campaign::TEST_JSON).unwrap();
+        let campaign = Campaign::parse(json).unwrap();
+
+        assert_eq!(campaign, Campaign::test_expected());
     }
 }

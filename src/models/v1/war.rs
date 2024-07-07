@@ -12,7 +12,7 @@ use super::stats::Statistics;
 /// Global information about the ongoing war.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct War {
     /// When this war was started as a datetime String
     #[serde_as(as = "DateTime<Utc>")]
@@ -43,5 +43,65 @@ impl HellApi {
     /// Endpoint: `/api/v1/war`.
     pub async fn war() -> Result<War> {
         middleware::request_blocking("/api/v1/war").await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDateTime;
+    use const_format::formatcp;
+
+    use crate::{
+        models::v1::stats::Statistics,
+        prelude::{Parseable, TestValue},
+    };
+
+    use super::War;
+
+    impl TestValue for War {
+        const TEST_JSON: &'static str = formatcp!(
+            r#"{{
+                "started": "2024-07-07T13:34:01.786Z",
+                "ended": "2024-07-07T13:34:01.786Z",
+                "now": "2024-07-07T13:34:01.786Z",
+                "clientVersion": "0.1.0",
+                "factions": [],
+                "impactMultiplier": 0,  
+                "statistics": {}
+            }}"#,
+            Statistics::TEST_JSON
+        );
+
+        fn test_expected() -> Self {
+            War {
+                started: NaiveDateTime::parse_from_str(
+                    "2024-07-07T13:34:01.786Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
+                ended: NaiveDateTime::parse_from_str(
+                    "2024-07-07T13:34:01.786Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
+                now: NaiveDateTime::parse_from_str(
+                    "2024-07-07T13:34:01.786Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
+                client_version: String::from("0.1.0"),
+                factions: vec![],
+                impact_multiplier: 0f32,
+                statistics: Statistics::test_expected(),
+            }
+        }
+    }
+
+    #[test]
+    fn parse_war() {
+        let json = serde_json::from_str(War::TEST_JSON).unwrap();
+        let war = War::parse(json).unwrap();
+
+        assert_eq!(war, War::test_expected());
     }
 }

@@ -19,7 +19,7 @@ pub type Position = common::planet::Position;
 /// Represents an ongoing event on a planet.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Event {
     /// The unique identifier of the event.
     pub id: i32,
@@ -51,7 +51,7 @@ pub struct Event {
 
 /// Contains all aggregated information ArrowHead has about a planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct Planet {
     /// The unique identifier ArrowHead assigned to this planet.
     #[serde(rename = "index")]
@@ -99,7 +99,7 @@ impl Parseable for Vec<Planet> {}
 
 /// Represents information about a biome of a Planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Biome {
     // The name of the biome.
     pub name: String,
@@ -109,7 +109,7 @@ pub struct Biome {
 
 /// Represents an environmental hazard that can be present on a Planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Hazard {
     /// The name of the environmental hazard.
     pub name: String,
@@ -138,5 +138,125 @@ impl HellApi {
     /// Endpoint: `/api/v1/planet-events`.
     pub async fn planet_events() -> Result<Vec<Planet>> {
         middleware::request_blocking("/api/v1/planet-events").await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDateTime;
+    use const_format::formatcp;
+
+    use crate::{
+        models::v1::{dispatch::Message, stats::Statistics},
+        prelude::{Parseable, TestValue},
+    };
+
+    use super::{Biome, Event, Planet, Position};
+
+    impl TestValue for Event {
+        fn test_expected() -> Self {
+            Event {
+                id: 0,
+                event_type: 1,
+                faction: String::from("faction"),
+                health: 2,
+                max_health: 3,
+                start: NaiveDateTime::parse_from_str(
+                    "2024-07-06T20:49:56.700Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
+                end: NaiveDateTime::parse_from_str(
+                    "2024-07-06T20:49:56.700Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
+                campaign_id: 4,
+                joint_operations: vec![5],
+            }
+        }
+
+        const TEST_JSON: &'static str = r#"{
+                "id": 0,
+                "eventType": 1,
+                "faction": "faction",
+                "health": 2,
+                "maxHealth": 3,
+                "startTime": "2024-07-06T20:49:56.700Z",
+                "endTime": "2024-07-06T20:49:56.700Z",
+                "campaignId": 4,
+                "jointOperationIds": [
+                  5
+                ]
+              }"#;
+    }
+
+    impl TestValue for Planet {
+        fn test_expected() -> Self {
+            Planet {
+                id: 0,
+                name: Message::from("name"),
+                sector: String::from("sector"),
+                biome: Biome {
+                    name: String::from("biome"),
+                    description: String::from("biome is cold"),
+                },
+                hazards: vec![],
+                hash: 1,
+                position: Position { x: 2f32, y: 3f32 },
+                waypoints: vec![4],
+                max_health: 5,
+                health: 6,
+                disabled: true,
+                initial_owner: String::from("someone"),
+                current_owner: String::from("owner"),
+                regen_per_second: 7f32,
+                event: Some(Event::test_expected()),
+                statistics: Statistics::test_expected(),
+                attacking: vec![29],
+            }
+        }
+
+        const TEST_JSON: &'static str = formatcp!(
+            r#"{{
+              "index": 0,
+              "name": "name",
+              "sector": "sector",
+              "biome": {{
+                "name": "biome",
+                "description": "biome is cold"
+              }},
+              "hazards": [],
+              "hash": 1,
+              "position": {{
+                "x": 2,
+                "y": 3
+              }},
+              "waypoints": [
+                4
+              ],
+              "maxHealth": 5,
+              "health": 6,
+              "disabled": true,
+              "initialOwner": "someone",
+              "currentOwner": "owner",
+              "regenPerSecond": 7,
+              "event": {},
+              "statistics": {},
+              "attacking": [
+                29
+              ]
+            }}"#,
+            Event::TEST_JSON,
+            Statistics::TEST_JSON,
+        );
+    }
+
+    #[test]
+    fn parse_planet() {
+        let json = serde_json::from_str(Planet::TEST_JSON).unwrap();
+        let planet = Planet::parse(json).unwrap();
+
+        assert_eq!(planet, Planet::test_expected());
     }
 }

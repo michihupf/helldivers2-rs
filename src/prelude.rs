@@ -22,6 +22,9 @@ pub enum Error {
 
 pub type Result<T> = core::result::Result<T, Error>;
 
+/// Helper struct to use newtype pattern.
+pub(crate) struct W<T>(pub T);
+
 /// Specifies that the object is JSON parseable and provides
 /// the `parse()` method to return a struct of type `T`.
 pub(crate) trait Parseable {
@@ -35,9 +38,31 @@ pub(crate) trait Parseable {
     }
 }
 
+// impl<T> TryFrom<W<serde_json::Value>> for T
+// where
+//     T: DeserializeOwned + Parseable,
+// {
+//     type Error = crate::prelude::Error;
+
+//     fn try_from(value: W<serde_json::Value>) -> std::prelude::v1::Result<Self, Self::Error> {
+//         Self::parse(value.0)
+//     }
+// }
+
+/// Defines interface for testable values.
+#[cfg(test)]
+pub(crate) trait TestValue {
+    /// Returns the expected result corresponding to the [`test_json`][test_json].
+    fn test_expected() -> Self;
+
+    /// Returns the raw json string for a test.
+    const TEST_JSON: &'static str;
+}
+
 lazy_static! {
-    pub static ref RATE_LIMITER: Ratelimiter = Ratelimiter::builder(5, Duration::from_secs(11))
-        .max_tokens(5)
-        .build()
-        .unwrap();
+    pub(crate) static ref RATE_LIMITER: Ratelimiter =
+        Ratelimiter::builder(5, Duration::from_secs(11))
+            .max_tokens(5)
+            .build()
+            .unwrap();
 }

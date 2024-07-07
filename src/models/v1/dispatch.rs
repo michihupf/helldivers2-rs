@@ -8,16 +8,22 @@ use crate::{
 };
 
 /// A message than can either be a simple String or a LocalizedMessage.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
 pub enum Message {
     Simple(String),
     Localized(LocalizedMessage),
 }
 
+impl From<&str> for Message {
+    fn from(value: &str) -> Self {
+        Message::Simple(String::from(value))
+    }
+}
+
 /// A localized message for a specific language.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[allow(non_snake_case)]
 pub struct LocalizedMessage {
     /// The message in en-US.
@@ -53,7 +59,7 @@ pub struct LocalizedMessage {
 /// status of the war effort.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Dispatch {
     /// The unique identifier of the dispatch.
     pub id: i32,
@@ -73,7 +79,7 @@ impl Parseable for Vec<Dispatch> {}
 /// Represents a news article from Steam's news feed.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct SteamNews {
     /// The identifier assigned by Steam to this news item.
     pub id: String,
@@ -123,5 +129,83 @@ impl HellApi {
     pub async fn steam_newsitem(gid: &String) -> Result<SteamNews> {
         let endpoint = format!("/api/v1/steam/{gid}");
         middleware::request_blocking(endpoint.as_str()).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDateTime;
+
+    use crate::{
+        models::v1::dispatch::Message,
+        prelude::{Parseable, TestValue},
+    };
+
+    use super::{Dispatch, SteamNews};
+
+    impl TestValue for Dispatch {
+        fn test_expected() -> Self {
+            Dispatch {
+                id: 0,
+                published: NaiveDateTime::parse_from_str(
+                    "2024-07-06T20:18:00.090Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
+                _type: 1,
+                message: Message::from("string"),
+            }
+        }
+
+        const TEST_JSON: &'static str = r#"
+          {
+            "id": 0,
+            "published": "2024-07-06T20:18:00.090Z",
+            "type": 1,
+            "message": "string"
+          }
+        "#;
+    }
+
+    impl TestValue for SteamNews {
+        fn test_expected() -> Self {
+            SteamNews {
+                id: String::from("0"),
+                title: String::from("title"),
+                url: String::from("url"),
+                author: String::from("author"),
+                content: String::from("content"),
+                published: NaiveDateTime::parse_from_str(
+                    "2024-07-06T20:18:00.090Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
+            }
+        }
+
+        const TEST_JSON: &'static str = r#"{
+            "id": "0",
+            "title": "title",
+            "url": "url",
+            "author": "author",
+            "content": "content",
+            "publishedAt": "2024-07-06T20:18:00.090Z"
+        }"#;
+    }
+
+    #[test]
+    fn parse_dispatch() {
+        let json = serde_json::from_str(Dispatch::TEST_JSON).unwrap();
+        let dispatch = Dispatch::parse(json).unwrap();
+
+        assert_eq!(dispatch, Dispatch::test_expected());
+    }
+
+    #[test]
+    fn parse_steam_news() {
+        let json = serde_json::from_str(SteamNews::TEST_JSON).unwrap();
+        let steam_news = SteamNews::parse(json).unwrap();
+
+        assert_eq!(steam_news, SteamNews::test_expected());
     }
 }
