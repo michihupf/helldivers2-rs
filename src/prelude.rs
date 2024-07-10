@@ -1,9 +1,8 @@
-use std::time::Duration;
-
 use lazy_static::lazy_static;
-use ratelimit::Ratelimiter;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
+
+use crate::middleware::RateLimit;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -40,7 +39,7 @@ pub(crate) trait Parseable {
 
 // impl<T> TryFrom<W<serde_json::Value>> for T
 // where
-//     T: DeserializeOwned + Parseable,
+//     T: Parseable + DeserializeOwned,
 // {
 //     type Error = crate::prelude::Error;
 
@@ -60,9 +59,5 @@ pub(crate) trait TestValue {
 }
 
 lazy_static! {
-    pub(crate) static ref RATE_LIMITER: Ratelimiter =
-        Ratelimiter::builder(5, Duration::from_secs(11))
-            .max_tokens(5)
-            .build()
-            .unwrap();
+    pub(crate) static ref RATE_LIMIT: RateLimit = RateLimit::default();
 }

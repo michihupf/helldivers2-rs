@@ -41,10 +41,10 @@ pub struct Setting {
     pub _type: i32,
     /// The title of the assignment.
     #[serde(rename = "overrideTitle")]
-    pub override_title: String,
+    pub override_title: Option<String>,
     /// The briefing (description) of this assignment.
     #[serde(rename = "overrideBrief")]
-    pub override_brief: String,
+    pub override_brief: Option<String>,
     /// A description of what is expected of Helldivers to complet the assignment.
     #[serde(rename = "taskDescription")]
     pub task_descriptions: String,
