@@ -26,27 +26,13 @@ pub(crate) struct W<T>(pub T);
 
 /// Specifies that the object is JSON parseable and provides
 /// the `parse()` method to return a struct of type `T`.
-pub(crate) trait Parseable {
-    /// Parses the JSON response from the API endpoint and returns `Ok(T)`
+pub(crate) trait Parseable: DeserializeOwned {
+    /// Tries to parse the JSON response from the API endpoint and returns `Ok(T)`
     /// if parsing succeeded - `Err(HellHubError)` otherwise.
-    fn parse(json: Value) -> Result<Self>
-    where
-        Self: DeserializeOwned,
-    {
+    fn parse(json: Value) -> Result<Self> {
         serde_json::from_value::<Self>(json).map_err(Error::ParseError)
     }
 }
-
-// impl<T> TryFrom<W<serde_json::Value>> for T
-// where
-//     T: Parseable + DeserializeOwned,
-// {
-//     type Error = crate::prelude::Error;
-
-//     fn try_from(value: W<serde_json::Value>) -> std::prelude::v1::Result<Self, Self::Error> {
-//         Self::parse(value.0)
-//     }
-// }
 
 /// Defines interface for testable values.
 #[cfg(test)]

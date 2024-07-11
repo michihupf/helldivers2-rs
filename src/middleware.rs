@@ -7,7 +7,6 @@ use std::{
 };
 
 use reqwest::header::HeaderMap;
-use serde::de::DeserializeOwned;
 
 use crate::prelude::{Error, Parseable, Result, RATE_LIMIT};
 
@@ -74,10 +73,8 @@ impl Default for RateLimit {
     }
 }
 
-pub(crate) async fn request<T>(endpoint: &str) -> Result<T>
-where
-    T: DeserializeOwned + Parseable,
-{
+#[allow(dead_code)]
+pub(crate) async fn request<T: Parseable>(endpoint: &str) -> Result<T> {
     if let Err(duration) = RATE_LIMIT.try_wait() {
         return Err(Error::RateLimitReached(duration));
     }
@@ -92,10 +89,7 @@ where
 
 /// Requests the API `endpoint` blocking the current thread when the `rate` limit has been reached.
 /// Afterwards the JSON response is deserialized into `T`.
-pub(crate) async fn request_blocking<T>(endpoint: &str) -> Result<T>
-where
-    T: DeserializeOwned + Parseable,
-{
+pub(crate) async fn request_blocking<T: Parseable>(endpoint: &str) -> Result<T> {
     // block until ready
     let response = loop {
         if let Err(wait_for) = RATE_LIMIT.try_wait() {
