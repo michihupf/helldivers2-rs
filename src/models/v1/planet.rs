@@ -1,4 +1,5 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
+use proc::{parse_test, Parseable};
 use serde::Deserialize;
 
 use crate::{
@@ -19,7 +20,8 @@ pub type Position = common::planet::Position;
 /// Represents an ongoing event on a planet.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize)]
+#[parse_test(make_parseable)]
 pub struct Event {
     /// The unique identifier of the event.
     pub id: i32,
@@ -51,7 +53,8 @@ pub struct Event {
 
 /// Contains all aggregated information ArrowHead has about a planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, Parseable)]
+#[parse_test]
 pub struct Planet {
     /// The unique identifier ArrowHead assigned to this planet.
     #[serde(rename = "index")]
@@ -92,14 +95,14 @@ pub struct Planet {
     pub statistics: Statistics,
     /// A list of planets currently attacked by this planet.
     pub attacking: Vec<i32>,
+    // TODO: regions field
 }
 
-impl Parseable for Planet {}
 impl Parseable for Vec<Planet> {}
 
 /// Represents information about a biome of a Planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct Biome {
     // The name of the biome.
     pub name: String,
@@ -109,7 +112,7 @@ pub struct Biome {
 
 /// Represents an environmental hazard that can be present on a Planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct Hazard {
     /// The name of the environmental hazard.
     pub name: String,
@@ -118,14 +121,14 @@ pub struct Hazard {
 }
 
 impl HellApi {
-    /// Retrieves a list of all available planet information.
-    ///
-    /// Endpoint: `/api/v1/planets`.
-    pub async fn planets() -> Result<Vec<Planet>> {
-        middleware::request_blocking("/api/v1/planets").await
-    }
+    impl_route!(
+        "/api/v1/planets",
+        planets,
+        Vec<Planet>,
+        "Fetches a list of all available planets."
+    );
 
-    /// Retrieves a specific planet with identifier `id`.
+    /// Fetches a specific planet with identifier `id`.
     ///
     /// Endpoint: `/api/v1/planets/{id}`.
     pub async fn planet(id: i32) -> Result<Planet> {
@@ -133,12 +136,12 @@ impl HellApi {
         middleware::request_blocking(endpoint.as_str()).await
     }
 
-    /// Retrieves a list of all planets with an active event.
-    ///
-    /// Endpoint: `/api/v1/planet-events`.
-    pub async fn planet_events() -> Result<Vec<Planet>> {
-        middleware::request_blocking("/api/v1/planet-events").await
-    }
+    impl_route!(
+        "/api/v1/planet-events",
+        planet_events,
+        Vec<Planet>,
+        "Fetches a list of all planets with an active event."
+    );
 }
 
 #[cfg(test)]
@@ -148,7 +151,7 @@ mod tests {
 
     use crate::{
         models::v1::{dispatch::Message, stats::Statistics},
-        prelude::{Parseable, TestValue},
+        prelude::TestValue,
     };
 
     use super::{Biome, Event, Planet, Position};
@@ -211,7 +214,7 @@ mod tests {
                 initial_owner: String::from("someone"),
                 current_owner: String::from("owner"),
                 regen_per_second: 7f32,
-                event: Some(Event::test_expected()),
+                event: None,
                 statistics: Statistics::test_expected(),
                 attacking: vec![29],
             }
@@ -241,22 +244,13 @@ mod tests {
               "initialOwner": "someone",
               "currentOwner": "owner",
               "regenPerSecond": 7,
-              "event": {},
+              "event": null,
               "statistics": {},
               "attacking": [
                 29
               ]
             }}"#,
-            Event::TEST_JSON,
             Statistics::TEST_JSON,
         );
-    }
-
-    #[test]
-    fn parse_planet() {
-        let json = serde_json::from_str(Planet::TEST_JSON).unwrap();
-        let planet = Planet::parse(json).unwrap();
-
-        assert_eq!(planet, Planet::test_expected());
     }
 }

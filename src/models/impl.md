@@ -61,6 +61,12 @@
 ### War
 - [x] War
 
+## v2
+### Space Stations
+- [ ] SpaceStation
+- [ ] TacticalAction
+- [ ] TacticalActionCost
+
 
 # Implemented routes
 ## raw
@@ -70,6 +76,7 @@
 - [x] `/raw/api/Stats/war/{war_id}/801/summary`
 - [x] `/raw/api/NewsFeed/{war_id}`
 - [x] `/raw/api/v2/Assignment/War/{war_id}`
+- [ ] `/raw/api/v2/SpaceStation/War/{war_id}/{index}`
 
 ## v1
 - [x] `/api/v1/war`
@@ -85,3 +92,11 @@
 - [x] `/api/v1/steam`
 - [x] `/api/v1/steam/{gid}`
 
+## v2
+- [ ] `/api/v2/dispatches` (same as v1?)
+- [ ] `/api/v2/dispatches/{index}` (same as v1?)
+- [x] `/api/v2/space-stations`
+- [x] `/api/v2/space-stations/{index}`
+
+# Important note
+All data structures implemeted as 2nd variant unless otherwise specified.

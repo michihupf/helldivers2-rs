@@ -20,7 +20,7 @@ pub struct Assignment {
     /// An internal identifier for this assignment.
     pub id32: i64,
     /// A list of numbers. How they represent progress is currently unknown.
-    pub progress: Vec<i32>,
+    pub progress: Vec<i64>,
     /// The amount of seconds until this assignment expires.
     #[serde(rename = "expiresIn")]
     #[serde_as(as = "DurationSeconds")]

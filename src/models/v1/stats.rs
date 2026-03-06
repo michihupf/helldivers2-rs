@@ -1,12 +1,14 @@
 use std::time::Duration;
 
+use proc::parse_test;
 use serde::Deserialize;
 use serde_with::DurationSeconds;
 
 /// Represents base statistics.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize)]
+#[parse_test(make_parseable)]
 pub struct Statistics {
     /// The amount of missions won.
     #[serde(rename = "missionsWon")]

@@ -1,4 +1,5 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
+use proc::{parse_test, Parseable};
 use serde::Deserialize;
 
 use crate::{
@@ -8,7 +9,8 @@ use crate::{
 };
 
 /// A message than can either be a simple String or a LocalizedMessage.
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize)]
+#[cfg_attr(test, derive(PartialEq))]
 #[serde(untagged)]
 pub enum Message {
     Simple(String),
@@ -23,8 +25,9 @@ impl From<&str> for Message {
 
 /// A localized message for a specific language.
 #[non_exhaustive]
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize)]
 #[allow(non_snake_case)]
+#[parse_test(make_parseable)]
 pub struct LocalizedMessage {
     /// The message in en-US.
     #[serde(rename = "en-US")]
@@ -59,7 +62,8 @@ pub struct LocalizedMessage {
 /// status of the war effort.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Parseable)]
+#[parse_test]
 pub struct Dispatch {
     /// The unique identifier of the dispatch.
     pub id: i32,
@@ -73,13 +77,13 @@ pub struct Dispatch {
     pub message: Message,
 }
 
-impl Parseable for Dispatch {}
 impl Parseable for Vec<Dispatch> {}
 
 /// Represents a news article from Steam's news feed.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Parseable)]
+#[parse_test]
 pub struct SteamNews {
     /// The identifier assigned by Steam to this news item.
     pub id: String,
@@ -97,16 +101,15 @@ pub struct SteamNews {
     pub published: NaiveDateTime,
 }
 
-impl Parseable for SteamNews {}
 impl Parseable for Vec<SteamNews> {}
 
 impl HellApi {
-    /// Retrieves a list of all available dispatch information.
-    ///
-    /// Endpoint: `/api/v1/dispatches`.
-    pub async fn dispatches() -> Result<Vec<Dispatch>> {
-        middleware::request_blocking("/api/v1/dispatches").await
-    }
+    impl_route!(
+        "/api/v1/dispatches",
+        dispatches,
+        Vec<Dispatch>,
+        "Fetches a list of all available dispatch information."
+    );
 
     /// Retrieves a specific dispatch with identifier `id`.
     ///
@@ -137,11 +140,39 @@ mod tests {
     use chrono::NaiveDateTime;
 
     use crate::{
-        models::v1::dispatch::Message,
-        prelude::{Parseable, TestValue},
+        models::v1::dispatch::{LocalizedMessage, Message},
+        prelude::TestValue,
     };
 
     use super::{Dispatch, SteamNews};
+
+    impl TestValue for LocalizedMessage {
+        const TEST_JSON: &'static str = r#"{
+          "en-US": "us",
+          "de-DE": "de",
+          "es-ES": "es",
+          "ru-RU": "ru",
+          "fr-FR": "fr",
+          "it-IT": "it",
+          "pl-PL": "pl",
+          "zh-Hans": "hans",
+          "zh-Hant": "hant"
+        }"#;
+
+        fn test_expected() -> Self {
+            LocalizedMessage {
+                en_US: Some(String::from("us")),
+                de_DE: Some(String::from("de")),
+                es_ES: Some(String::from("es")),
+                ru_RU: Some(String::from("ru")),
+                fr_FR: Some(String::from("fr")),
+                it_IT: Some(String::from("it")),
+                pl_PL: Some(String::from("pl")),
+                zh_Hans: Some(String::from("hans")),
+                zh_Hant: Some(String::from("hant")),
+            }
+        }
+    }
 
     impl TestValue for Dispatch {
         fn test_expected() -> Self {
@@ -191,21 +222,5 @@ mod tests {
             "content": "content",
             "publishedAt": "2024-07-06T20:18:00.090Z"
         }"#;
-    }
-
-    #[test]
-    fn parse_dispatch() {
-        let json = serde_json::from_str(Dispatch::TEST_JSON).unwrap();
-        let dispatch = Dispatch::parse(json).unwrap();
-
-        assert_eq!(dispatch, Dispatch::test_expected());
-    }
-
-    #[test]
-    fn parse_steam_news() {
-        let json = serde_json::from_str(SteamNews::TEST_JSON).unwrap();
-        let steam_news = SteamNews::parse(json).unwrap();
-
-        assert_eq!(steam_news, SteamNews::test_expected());
     }
 }

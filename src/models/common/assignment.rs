@@ -5,7 +5,7 @@ use serde_repr::Deserialize_repr;
 /// known but some have been found.
 #[non_exhaustive]
 #[repr(i32)]
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize_repr)]
+#[derive(Debug, Clone, PartialEq, Deserialize_repr)]
 pub enum TaskType {
     /// Eradicate the opposing faction.
     Eradication = 3,
@@ -15,21 +15,24 @@ pub enum TaskType {
     Defense,
     /// FIXME More information needed.
     Control,
+    /// Unknown type. If you figure it out feel free to raise an issue.
+    #[serde(other)]
+    Unknown,
 }
 
 /// Represents a task in an Assignment. Its exact values are not known and
 /// little of its purpose is clear.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct Task {
     /// Numerical value. Only some values are known
     #[serde(rename = "type")]
     pub task_type: TaskType,
     /// A list of numerical values. Purpose unknown. FIXME
-    pub values: Vec<i32>,
+    pub values: Vec<u64>,
     /// A list of numerical values. Purpose unknown. FIXME
     #[serde(rename = "valueTypes")]
-    pub value_types: Vec<i32>,
+    pub value_types: Vec<u64>,
 }
 
 pub type JointOperationId = i32;

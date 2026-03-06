@@ -1,18 +1,16 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
+use proc::{parse_test, Parseable};
 use serde::Deserialize;
 
-use crate::{
-    middleware,
-    prelude::{Parseable, Result},
-    HellApi,
-};
+use crate::{middleware, prelude::Result, HellApi};
 
 use super::stats::Statistics;
 
 /// Global information about the ongoing war.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, Parseable)]
+#[parse_test]
 pub struct War {
     /// When this war was started as a datetime String
     #[serde_as(as = "DateTime<Utc>")]
@@ -35,8 +33,6 @@ pub struct War {
     pub statistics: Statistics,
 }
 
-impl Parseable for War {}
-
 impl HellApi {
     /// Requests the the current war.
     ///
@@ -51,10 +47,7 @@ mod tests {
     use chrono::NaiveDateTime;
     use const_format::formatcp;
 
-    use crate::{
-        models::v1::stats::Statistics,
-        prelude::{Parseable, TestValue},
-    };
+    use crate::{models::v1::stats::Statistics, prelude::TestValue};
 
     use super::War;
 
@@ -95,13 +88,5 @@ mod tests {
                 statistics: Statistics::test_expected(),
             }
         }
-    }
-
-    #[test]
-    fn parse_war() {
-        let json = serde_json::from_str(War::TEST_JSON).unwrap();
-        let war = War::parse(json).unwrap();
-
-        assert_eq!(war, War::test_expected());
     }
 }

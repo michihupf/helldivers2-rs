@@ -6,9 +6,15 @@ use std::{
     time::Duration,
 };
 
-use reqwest::header::HeaderMap;
+use reqwest::{
+    header::{HeaderMap, HeaderValue},
+    Client,
+};
 
-use crate::prelude::{Error, Parseable, Result, RATE_LIMIT};
+use crate::{
+    prelude::{Error, Parseable, Result, RATE_LIMIT},
+    SUPER_CLIENT, SUPER_CONTACT,
+};
 
 /// helldivers2 API base url
 const BASE_URL: &str = "https://api.helldivers2.dev";
@@ -79,10 +85,36 @@ pub(crate) async fn request<T: Parseable>(endpoint: &str) -> Result<T> {
         return Err(Error::RateLimitReached(duration));
     }
 
-    let response = reqwest::get(BASE_URL.to_owned() + endpoint).await?;
+    let client = Client::new();
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        "X-Super-Client",
+        HeaderValue::from_str(
+            SUPER_CLIENT
+                .get()
+                .ok_or(Error::HeaderValueMissing(String::from("SUPER_CLIENT")))?,
+        )
+        .unwrap(),
+    );
+    headers.insert(
+        "X-Super-Contact",
+        HeaderValue::from_str(
+            SUPER_CONTACT
+                .get()
+                .ok_or(Error::HeaderValueMissing(String::from("SUPER_CONTACT")))?,
+        )
+        .unwrap(),
+    );
+
+    let response = client
+        .get(BASE_URL.to_owned() + endpoint)
+        .headers(headers)
+        .send()
+        .await?;
     RATE_LIMIT.update(response.headers());
 
     let json: serde_json::Value = response.json().await.map_err(Error::RequestError)?;
+    println!("{json}");
 
     T::parse(json)
 }
@@ -92,9 +124,34 @@ pub(crate) async fn request<T: Parseable>(endpoint: &str) -> Result<T> {
 pub(crate) async fn request_blocking<T: Parseable>(endpoint: &str) -> Result<T> {
     // block until ready
     let response = loop {
+        let client = Client::new();
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            "X-Super-Client",
+            HeaderValue::from_str(
+                SUPER_CLIENT
+                    .get()
+                    .ok_or(Error::HeaderValueMissing(String::from("SUPER_CLIENT")))?,
+            )
+            .unwrap(),
+        );
+        headers.insert(
+            "X-Super-Contact",
+            HeaderValue::from_str(
+                SUPER_CONTACT
+                    .get()
+                    .ok_or(Error::HeaderValueMissing(String::from("SUPER_CONTACT")))?,
+            )
+            .unwrap(),
+        );
         if let Err(wait_for) = RATE_LIMIT.try_wait() {
             tokio::time::sleep(wait_for).await;
-            if let Ok(response) = reqwest::get(BASE_URL.to_owned() + endpoint).await {
+            if let Ok(response) = client
+                .get(BASE_URL.to_owned() + endpoint)
+                .headers(headers)
+                .send()
+                .await
+            {
                 if response.status() == 200 {
                     break response;
                 } else {
@@ -102,12 +159,17 @@ pub(crate) async fn request_blocking<T: Parseable>(endpoint: &str) -> Result<T> 
                 }
             };
         } else {
-            break reqwest::get(BASE_URL.to_owned() + endpoint).await?;
+            break client
+                .get(BASE_URL.to_owned() + endpoint)
+                .headers(headers)
+                .send()
+                .await?;
         }
     };
 
     RATE_LIMIT.update(response.headers());
     let json = response.json().await.map_err(Error::RequestError)?;
+    println!("{json}");
 
     T::parse(json)
 }

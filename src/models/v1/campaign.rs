@@ -1,3 +1,4 @@
+use proc::{parse_test, Parseable};
 use serde::Deserialize;
 
 use crate::{
@@ -10,7 +11,8 @@ use super::planet::Planet;
 
 /// Represents an ongoing campaign on a planet.
 #[non_exhaustive]
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, Parseable)]
+#[parse_test]
 pub struct Campaign {
     /// The unique identifier of this campaign.
     pub id: i32,
@@ -21,18 +23,19 @@ pub struct Campaign {
     pub _type: i32,
     /// Indicates how many campaigns have already been fought on this planet.
     pub count: u64,
+    /// The faction that is currently fighting this campaign.
+    pub faction: String,
 }
 
-impl Parseable for Campaign {}
 impl Parseable for Vec<Campaign> {}
 
 impl HellApi {
-    /// Retrieves a list of all available campaign information.
-    ///
-    /// Endpoint: `/api/v1/campaigns`.
-    pub async fn campaigns() -> Result<Vec<Campaign>> {
-        middleware::request_blocking("/api/v1/campaigns").await
-    }
+    impl_route!(
+        "/api/v1/campaigns",
+        campaigns,
+        Vec<Campaign>,
+        "Fetches a list of all available campaigns."
+    );
 
     /// Retrieves a specific campaign with identifier `id`.
     ///
@@ -47,10 +50,7 @@ impl HellApi {
 mod tests {
     use const_format::formatcp;
 
-    use crate::{
-        models::v1::planet::Planet,
-        prelude::{Parseable, TestValue},
-    };
+    use crate::{models::v1::planet::Planet, prelude::TestValue};
 
     use super::Campaign;
 
@@ -61,6 +61,7 @@ mod tests {
                 planet: Planet::test_expected(),
                 _type: 1,
                 count: 2,
+                faction: String::from("testing"),
             }
         }
 
@@ -69,17 +70,10 @@ mod tests {
                 "id": 0,
                 "planet": {},
                 "type": 1,
-                "count": 2
+                "count": 2,
+                "faction": "testing"
             }}"#,
             Planet::TEST_JSON
         );
-    }
-
-    #[test]
-    fn parse_campaign() {
-        let json = serde_json::from_str(Campaign::TEST_JSON).unwrap();
-        let campaign = Campaign::parse(json).unwrap();
-
-        assert_eq!(campaign, Campaign::test_expected());
     }
 }

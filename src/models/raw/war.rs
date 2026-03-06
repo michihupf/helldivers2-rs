@@ -1,12 +1,9 @@
 use chrono::NaiveDateTime;
+use proc::{parse_test, Parseable};
 use serde::Deserialize;
 use serde_with::TimestampSeconds;
 
-use crate::{
-    middleware,
-    prelude::{Parseable, Result},
-    HellApi,
-};
+use crate::{middleware, prelude::Result, HellApi};
 
 use super::{
     campaign::Campaign,
@@ -17,7 +14,7 @@ use super::{
 /// Type of the ID returned from the WarID endpoint.
 #[non_exhaustive]
 #[repr(transparent)]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Parseable)]
 pub struct WarId {
     pub id: i32,
 }
@@ -28,12 +25,11 @@ impl From<i32> for WarId {
     }
 }
 
-impl Parseable for WarId {}
-
 /// Represents a snapshot of the current status of the
 /// galactic war.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Parseable)]
+#[parse_test]
 pub struct WarStatus {
     /// The war season this status refers to.
     #[serde(rename = "warId")]
@@ -64,12 +60,11 @@ pub struct WarStatus {
     pub planet_events: Vec<PlanetEvent>,
 }
 
-impl Parseable for WarStatus {}
-
 /// Represents information about the current war.
 #[non_exhaustive]
 #[serde_with::serde_as]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Parseable)]
+// #[parse_test]
 pub struct WarInfo {
     /// The war season this WarInfo refers to.
     #[serde(rename = "warId")]
@@ -94,11 +89,10 @@ pub struct WarInfo {
     pub home_worlds: Vec<HomeWorld>,
 }
 
-impl Parseable for WarInfo {}
-
 /// Represents general statistics about the galaxy and specific planets.
 #[non_exhaustive]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Parseable)]
+// #[parse_test]
 pub struct WarSummary {
     /// Galaxy wide statistics aggregated from all planets.
     pub galaxy_stats: GalaxyStats,
@@ -107,11 +101,11 @@ pub struct WarSummary {
     pub planet_stats: Vec<PlanetStats>,
 }
 
-impl Parseable for WarSummary {}
-
 /// Represents a joint operation.
 #[non_exhaustive]
 #[derive(Debug, Deserialize)]
+#[cfg_attr(test, derive(PartialEq))]
+// #[parse_test(make_parseable)]
 pub struct JointOperation {
     pub id: i32,
     #[serde(rename = "planetIndex")]
@@ -121,12 +115,12 @@ pub struct JointOperation {
 }
 
 impl HellApi {
-    /// Requests the current war id.
-    ///
-    /// Endpoint: `/raw/api/WarSeason/current/WarID`.
-    pub async fn war_id() -> Result<WarId> {
-        middleware::request_blocking("/raw/api/WarSeason/current/WarID").await
-    }
+    impl_route!(
+        "/raw/api/WarSeason/current/WarID",
+        war_id,
+        WarId,
+        "Requests the current war id."
+    );
 
     /// Requests the current war status.
     ///
@@ -150,5 +144,94 @@ impl HellApi {
     pub async fn war_summary(war_id: &WarId) -> Result<WarSummary> {
         let endpoint = format!("/raw/api/Stats/war/{}/summary", war_id.id);
         middleware::request_blocking(endpoint.as_str()).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use crate::{models::raw::war::WarStatus, prelude::TestValue};
+
+    impl TestValue for WarStatus {
+        const TEST_JSON: &'static str = r#"{
+              "warId": 801,
+              "time": 64880360,
+              "impactMultiplier": 0.018466096,
+              "storyBeatId32": 0,
+              "planetStatus": [],
+              "planetAttacks": [],
+              "campaigns": [],
+              "communityTargets": [],
+              "jointOperations": [],
+              "planetEvents": [],
+              "planetActiveEffects": [
+                {
+                  "index": 256,
+                  "galacticEffectId": 1190
+                }
+              ],
+              "planetRegions": [
+                {
+                  "planetIndex": 114,
+                  "regionIndex": 0,
+                  "owner": 3,
+                  "health": 400000,
+                  "regerPerSecond": 1.1111112,
+                  "availabilityFactor": 0.57685,
+                  "isAvailable": false,
+                  "players": 0
+                }
+              ],
+              "activeElectionPolicyEffects": [],
+              "globalEvents": [
+                {
+                  "eventId": 1500817,
+                  "id32": 2520682855,
+                  "portraitId32": 0,
+                  "title": "BRIEFING",
+                  "titleId32": 2908633975,
+                  "message": "Classified Ministry of Science readouts indicate a severe escalation of...",
+                  "messageId32": 2649354563,
+                  "race": 1,
+                  "flag": 1,
+                  "introMediaId32": 2035168874,
+                  "outroMediaId32": 0,
+                  "assignmentId32": 77022345,
+                  "effectIds": [],
+                  "planetIndices": [],
+                  "expireTime": 65303717
+                }
+              ],
+              "superEarthWarResults": [],
+              "spaceStations": [
+                {
+                  "id32": 749875195,
+                  "planetIndex": 180,
+                  "activeEffectIds": [
+                    1238,
+                    1261,
+                    1262
+                  ],
+                  "currentElectionEndWarTime": 64886460,
+                  "flags": 1
+                }
+              ],
+              "globalResources": [],
+              "layoutVersion": 479
+            }"#;
+
+        fn test_expected() -> Self {
+            WarStatus {
+                war_id: 801,
+                time: 64880360,
+                impact_multiplier: 0.018466096,
+                story_beat_id32: 0,
+                planet_status: vec![],
+                planet_attacks: vec![],
+                campaigns: vec![],
+                joint_operations: vec![],
+                planet_events: vec![],
+            }
+        }
     }
 }

@@ -17,6 +17,9 @@ pub enum Error {
     /// Parsing of JSON response failed.
     #[error("Parsing of JSON failed. {0}")]
     ParseError(#[from] serde_json::Error),
+    /// Header values SUPER_CLIENT or SUPER_CONTACT not provided.
+    #[error("Header value {0} not provided. Have you forgotten to initialize?")]
+    HeaderValueMissing(String),
 }
 
 pub type Result<T> = core::result::Result<T, Error>;
@@ -42,6 +45,13 @@ pub(crate) trait TestValue {
 
     /// Returns the raw json string for a test.
     const TEST_JSON: &'static str;
+}
+
+#[cfg(test)]
+pub(crate) fn test_parsing<T: std::fmt::Debug + PartialEq + Parseable + TestValue>() {
+    let json = serde_json::from_str(T::TEST_JSON).unwrap();
+    let parsed = T::parse(json).unwrap();
+    assert_eq!(parsed, T::test_expected());
 }
 
 lazy_static! {

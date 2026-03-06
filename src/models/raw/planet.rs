@@ -1,4 +1,5 @@
 use chrono::NaiveDateTime;
+use proc::parse_test;
 use serde::Deserialize;
 use serde_with::TimestampSeconds;
 
@@ -20,6 +21,7 @@ pub struct HomeWorld {
 /// Represents the current status of a planet in the war.
 #[non_exhaustive]
 #[derive(Debug, Deserialize)]
+#[parse_test(make_parseable)]
 pub struct PlanetStatus {
     /// The identifier of the corresponding PlanetInfo.
     pub index: i32,
@@ -32,11 +34,13 @@ pub struct PlanetStatus {
     pub regen_per_sec: f64,
     /// The amount of players active on this planet.
     pub players: u64,
+    // TODO: position field
 }
 
 /// Represents an attack on a planet.
 #[non_exhaustive]
 #[derive(Debug, Deserialize)]
+#[parse_test(make_parseable)]
 pub struct PlanetAttack {
     /// The identifier of where the attack originates from.
     pub source: i32,
@@ -48,6 +52,7 @@ pub struct PlanetAttack {
 #[non_exhaustive]
 #[serde_with::serde_as]
 #[derive(Debug, Deserialize)]
+#[parse_test(make_parseable)]
 pub struct PlanetEvent {
     /// The unique identifier of the event.
     pub id: i32,
@@ -86,6 +91,7 @@ pub type PlanetCoordinates = common::planet::Position;
 /// Represents information of a planet.
 #[non_exhaustive]
 #[derive(Debug, Deserialize)]
+#[parse_test(make_parseable)]
 pub struct PlanetInfo {
     /// The identifier for the planet.
     pub index: i32,
@@ -106,4 +112,122 @@ pub struct PlanetInfo {
     /// The identifier of the faction that initially owned the planet.
     #[serde(rename = "initialOwner")]
     pub initial_owner: i32,
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::DateTime;
+
+    use crate::{
+        models::{
+            common::planet::Position,
+            raw::planet::{PlanetAttack, PlanetEvent, PlanetInfo, PlanetStatus},
+        },
+        prelude::TestValue,
+    };
+
+    impl TestValue for PlanetStatus {
+        const TEST_JSON: &'static str = r#"
+            {
+              "index": 0,
+              "owner": 1,
+              "health": 1000000,
+              "regenPerSecond": 4.1666665,
+              "players": 147,
+              "position": {
+                "x": 0,
+                "y": 0
+              }
+            }
+        "#;
+
+        fn test_expected() -> Self {
+            PlanetStatus {
+                index: 0,
+                owner: 1,
+                health: 1000000,
+                regen_per_sec: 4.1666665,
+                players: 147,
+            }
+        }
+    }
+
+    impl TestValue for PlanetAttack {
+        const TEST_JSON: &'static str = r#"
+            {
+              "source": 219,
+              "target": 175
+            }
+        "#;
+
+        fn test_expected() -> Self {
+            PlanetAttack {
+                source: 219,
+                target: 175,
+            }
+        }
+    }
+
+    impl TestValue for PlanetEvent {
+        const TEST_JSON: &'static str = r#"{
+          "id": 0,
+          "planetIndex": 1,
+          "eventType": 2,
+          "race": 3,
+          "health": 4,
+          "maxHealth": 5,
+          "startTime": 64880360,
+          "expireTime": 65303717,
+          "campaignId": 8,
+          "jointOperationIds": []
+        }"#;
+
+        fn test_expected() -> Self {
+            PlanetEvent {
+                id: 0,
+                planet_index: 1,
+                event_type: 2,
+                race: 3,
+                health: 4,
+                max_health: 5,
+                start: DateTime::from_timestamp(64880360, 0).unwrap().naive_utc(),
+                expire: DateTime::from_timestamp(65303717, 0).unwrap().naive_utc(),
+                campaign_id: 8,
+                joint_operations: vec![],
+            }
+        }
+    }
+
+    impl TestValue for PlanetInfo {
+        const TEST_JSON: &'static str = r#"{
+          "index": 1,
+          "settingsHash": 3621417917,
+          "planetNameId32": 0,
+          "position": {
+            "x": 0.05373042,
+            "y": 0.10565466
+          },
+          "waypoints": [],
+          "sector": 1,
+          "maxHealth": 1000000,
+          "disabled": false,
+          "initialOwner": 1
+        }"#;
+
+        fn test_expected() -> Self {
+            PlanetInfo {
+                index: 1,
+                settings_hash: 3621417917,
+                position: Position {
+                    x: 0.05373042,
+                    y: 0.10565466,
+                },
+                waypoints: vec![],
+                sector: 1,
+                max_health: 1000000,
+                disabled: false,
+                initial_owner: 1,
+            }
+        }
+    }
 }

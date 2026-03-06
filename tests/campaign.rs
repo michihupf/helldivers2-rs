@@ -2,6 +2,7 @@ use helldivers2_rs::HellApi;
 
 #[tokio::test]
 async fn v1_campaigns_endpoint() {
+    HellApi::init("helldivers2-rs", "");
     let result = HellApi::campaigns().await;
     let inner = result.unwrap();
     let first = inner.first().unwrap();
