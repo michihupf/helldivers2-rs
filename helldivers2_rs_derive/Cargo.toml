@@ -5,6 +5,8 @@ proc-macro = true
 name = "helldivers2_rs_derive"
 version = "0.1.0"
 edition = "2024"
+description = "proc macro implementations for #[derive(Parseable)] and #parse_test. Only used internally."
+license = "MIT"
 
 [dependencies]
 syn = { version = "2.0", features = ["full", "extra-traits"] }
