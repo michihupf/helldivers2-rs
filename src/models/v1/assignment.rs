@@ -31,7 +31,7 @@ pub struct MajorOrder {
     /// A list of tasks that need to be completed for this major order.
     pub tasks: Vec<Task>,
     /// The reward for completing the assignment.
-    pub reward: MajorOrderReward,
+    pub reward: Option<MajorOrderReward>,
     /// The date when the assignment will expire.
     #[serde_as(as = "DateTime<Utc>")]
     pub expiration: NaiveDateTime,
@@ -73,7 +73,6 @@ impl HellApi {
 #[cfg(test)]
 mod tests {
     use chrono::NaiveDateTime;
-    use const_format::formatcp;
 
     use crate::{
         models::{
@@ -103,8 +102,7 @@ mod tests {
     }
 
     impl TestValue for MajorOrder {
-        const TEST_JSON: &'static str = formatcp!(
-            r#"{{
+        const TEST_JSON: &'static str = r#"{
             "id": 3690749963,
             "progress": [
               0,
@@ -117,7 +115,7 @@ mod tests {
             "briefing": "Reduce the Terminid population and clear planets for citizen settlement, utilizing the new Hive Breaker Drill to cleanse their nurseries.",
             "description": null,
             "tasks": [
-              {{
+              {
                 "type": 11,
                 "values": [
                   1,
@@ -129,14 +127,12 @@ mod tests {
                   11,
                   12
                 ]
-              }}
+              }
             ],
-            "reward": {},
+            "reward": null,
             "expiration": "2024-06-22T15:54:52.2224108Z",
             "flags": 0
-            }}"#,
-            MajorOrderReward::TEST_JSON
-        );
+            }"#;
 
         fn test_expected() -> Self {
             MajorOrder {
@@ -146,9 +142,9 @@ mod tests {
                 briefing: Message::Simple(String::from("Reduce the Terminid population and clear planets for citizen settlement, utilizing the new Hive Breaker Drill to cleanse their nurseries.")),
                 description: None,
                 tasks: vec!{
-                  Task {task_type: TaskType::Liberation, values: vec!{1,1,34}, value_types: vec!{3,11,12}}
+                  Task {task_type: TaskType::Liberation, values: vec![1,1,34], value_types: vec![3,11,12]}
                 },
-                reward: MajorOrderReward::test_expected(),
+                reward: None,
                 expiration: NaiveDateTime::parse_from_str("2024-06-22T15:54:52.2224108Z",
                 "%Y-%m-%dT%H:%M:%S%.fZ").unwrap(),
             }

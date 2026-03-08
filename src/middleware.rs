@@ -114,7 +114,7 @@ pub(crate) async fn request<T: Parseable>(endpoint: &str) -> Result<T> {
     RATE_LIMIT.update(response.headers());
 
     let json: serde_json::Value = response.json().await.map_err(Error::RequestError)?;
-    println!("{json}");
+    // println!("{json}");
 
     T::parse(json)
 }
@@ -169,7 +169,7 @@ pub(crate) async fn request_blocking<T: Parseable>(endpoint: &str) -> Result<T> 
 
     RATE_LIMIT.update(response.headers());
     let json = response.json().await.map_err(Error::RequestError)?;
-    println!("{json}");
+    // println!("{json}");
 
     T::parse(json)
 }

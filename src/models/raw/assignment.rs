@@ -51,7 +51,7 @@ pub struct Setting {
     /// A list of Tasks that describe the assignment requirements.
     pub tasks: Vec<Task>,
     /// Information about the reward that players will receive upon completion.
-    pub reward: Reward,
+    pub reward: Option<Reward>,
     /// Flags suspected to be a binary OR'd value. The exact purpose is unknown as of now.
     pub flags: i32,
 }
