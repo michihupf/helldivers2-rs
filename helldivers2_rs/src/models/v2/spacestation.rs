@@ -1,12 +1,11 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
-use proc::parse_test;
+use helldivers2_rs_derive::parse_test;
 use serde::Deserialize;
 
 use crate::{
-    middleware,
+    HellApi, middleware,
     models::v1::planet::Planet,
     prelude::{Parseable, Result},
-    HellApi,
 };
 
 /// Represents the "cost" of a `TacticalAction`.
@@ -158,10 +157,18 @@ mod tests {
                 id: 4091660627,
                 media_id: 4091660627,
                 name: String::from("EAGLE STORM"),
-                description: String::from("DSS crews maintain deployment of a 24-hour rotating fleet of Eagle Fighters from the massive three-tiered Convocation Bay, supporting all Helldiver operations on the planet with close air support and halting enemy offensives for a short time."),
-                strategic_description: String::from("<span data-ah=\"1\">Eagle Airstrikes</span> during missions. Slows enemy progress in <span data-ah=\"1\">Defense Campaigns</span>."),
+                description: String::from(
+                    "DSS crews maintain deployment of a 24-hour rotating fleet of Eagle Fighters from the massive three-tiered Convocation Bay, supporting all Helldiver operations on the planet with close air support and halting enemy offensives for a short time.",
+                ),
+                strategic_description: String::from(
+                    "<span data-ah=\"1\">Eagle Airstrikes</span> during missions. Slows enemy progress in <span data-ah=\"1\">Defense Campaigns</span>.",
+                ),
                 status: 1,
-                status_expire: NaiveDateTime::parse_from_str("2026-03-10T04:19:41Z", "%Y-%m-%dT%H:%M:%SZ").unwrap(),
+                status_expire: NaiveDateTime::parse_from_str(
+                    "2026-03-10T04:19:41Z",
+                    "%Y-%m-%dT%H:%M:%SZ",
+                )
+                .unwrap(),
                 costs: vec![],
                 effect_ids: vec![1209, 1212, 1216],
             }

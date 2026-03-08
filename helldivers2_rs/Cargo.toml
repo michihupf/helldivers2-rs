@@ -1,0 +1,33 @@
+[package]
+name = "helldivers2_rs"
+version = "0.2.1"
+edition = "2024"
+description = "A wrapper for the unofficial helldivers-2/api."
+license = "MIT"
+repository = "https://github.com/michihupf/helldivers2-rs"
+readme = "README.md"
+keywords = ["helldivers", "api", "wrapper"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "helldivers2_rs"
+
+[features]
+rustls-tls = ["reqwest/rustls-tls"]
+
+[dependencies]
+chrono = "0.4.38"
+json = "0.12.4"
+lazy_static = "1.4.0"
+reqwest = { version = "0.12.4", features = ["json"] }
+serde = { version  = "1.0.203", features = ["derive"] }
+serde_json = "1.0.117"
+serde_repr = "0.1.19"
+serde_with = { version = "3.8.1", features = ["chrono"] }
+thiserror = "1.0.61"
+tokio = { version = "1.38.0", features = ["macros", "rt-multi-thread"] }
+helldivers2_rs_derive = { version = "0.1.0", path = "../helldivers2_rs_derive" }
+
+[dev-dependencies]
+const_format = "0.2.32"

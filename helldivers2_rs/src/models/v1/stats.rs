@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use proc::parse_test;
+use helldivers2_rs_derive::parse_test;
 use serde::Deserialize;
 use serde_with::DurationSeconds;
 

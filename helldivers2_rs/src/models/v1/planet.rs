@@ -1,15 +1,14 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
-use proc::{parse_test, Parseable};
+use helldivers2_rs_derive::{Parseable, parse_test};
 use serde::Deserialize;
 
 use crate::{
-    middleware,
+    HellApi, middleware,
     models::common::{
         self,
         assignment::{CampaignId, JointOperationId},
     },
     prelude::{Parseable, Result},
-    HellApi,
 };
 
 use super::{dispatch::Message, stats::Statistics};

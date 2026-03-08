@@ -1,8 +1,8 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
-use proc::{parse_test, Parseable};
+use helldivers2_rs_derive::{Parseable, parse_test};
 use serde::Deserialize;
 
-use crate::{middleware, prelude::Result, HellApi};
+use crate::{HellApi, middleware, prelude::Result};
 
 use super::stats::Statistics;
 

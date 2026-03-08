@@ -1,12 +1,11 @@
 use chrono::{DateTime, NaiveDateTime, Utc};
-use proc::{parse_test, Parseable};
+use helldivers2_rs_derive::{Parseable, parse_test};
 use serde::Deserialize;
 
 use crate::{
-    middleware,
+    HellApi, middleware,
     models::common,
     prelude::{Parseable, Result},
-    HellApi,
 };
 
 use super::dispatch::Message;
@@ -139,14 +138,21 @@ mod tests {
                 id: 3690749963,
                 progress: vec![0, 0, 0, 0, 0],
                 title: Message::Simple(String::from("MAJOR ORDER")),
-                briefing: Message::Simple(String::from("Reduce the Terminid population and clear planets for citizen settlement, utilizing the new Hive Breaker Drill to cleanse their nurseries.")),
+                briefing: Message::Simple(String::from(
+                    "Reduce the Terminid population and clear planets for citizen settlement, utilizing the new Hive Breaker Drill to cleanse their nurseries.",
+                )),
                 description: None,
-                tasks: vec!{
-                  Task {task_type: TaskType::Liberation, values: vec![1,1,34], value_types: vec![3,11,12]}
-                },
+                tasks: vec![Task {
+                    task_type: TaskType::Liberation,
+                    values: vec![1, 1, 34],
+                    value_types: vec![3, 11, 12],
+                }],
                 reward: None,
-                expiration: NaiveDateTime::parse_from_str("2024-06-22T15:54:52.2224108Z",
-                "%Y-%m-%dT%H:%M:%S%.fZ").unwrap(),
+                expiration: NaiveDateTime::parse_from_str(
+                    "2024-06-22T15:54:52.2224108Z",
+                    "%Y-%m-%dT%H:%M:%S%.fZ",
+                )
+                .unwrap(),
             }
         }
     }

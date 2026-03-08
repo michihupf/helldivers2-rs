@@ -1,4 +1,4 @@
-use proc::parse_test;
+use helldivers2_rs_derive::parse_test;
 use serde::Deserialize;
 
 /// Represents information about an ongoing campaign.
